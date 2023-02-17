@@ -3,6 +3,7 @@ import cors from "cors";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
+import { errorHandler } from "./middlewares/error.middleware.js";
 
 dotenv.config();
 
@@ -30,4 +31,5 @@ app.get("/", (req, res) => {
     });
 });
 
+app.use(errorHandler)
 app.listen(port, () => console.log(`listening on port: ${port}`))
