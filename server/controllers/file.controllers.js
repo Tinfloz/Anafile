@@ -11,7 +11,11 @@ const createFile = async (req, res) => {
         const user = await Users.findById(req.user._id);
         const file = req.file;
         const { keys, values, emails } = req.body;
-        const { cluster } = req.query;
+        const { clusterId } = req.query;
+        const cluster = await Clusters.findById(clusterId);
+        if (!cluster.members.includes(user._id)) {
+            throw "not authorised"
+        };
         const keyColumns = () => {
             let startChar = "A";
             let columns = [];
@@ -49,8 +53,6 @@ const createFile = async (req, res) => {
             const name = file.originalname;
             const base64xls = new Buffer.from(JSON.stringify(result.Sheet1)).toString("base64");
             const accessCode = shortid.generate();
-            // let decoded = Buffer.from(base64xls, "base64");
-            // console.log(JSON.parse(decoded), "decoded");
             const access = [req.user._id];
             for (let i of emails) {
                 const fileHandlers = await Users.findOne({
@@ -61,7 +63,7 @@ const createFile = async (req, res) => {
             const file = await Files.create({
                 fileString: base64xls,
                 fileName: file.originalname,
-                cluster,
+                cluster: clusterId,
                 access,
                 accessCode
             });
@@ -91,6 +93,7 @@ const createFile = async (req, res) => {
     };
 };
 
+// access a file
 const accessAFile = async (req, res) => {
     try {
         const user = await Users.findById(req.user._id);
@@ -139,6 +142,91 @@ const accessAFile = async (req, res) => {
     };
 };
 
+// add access member
+const addAccessMember = async (req, res) => {
+    try {
+        const { fileId, clusterId } = req.query;
+        const user = await Users.findById(fileId);
+        const { memberToAdd } = req.body;
+        const member = await Users.findOne({
+            email: memberToAdd
+        });
+        if (!member) {
+            throw "user not found"
+        }
+        const cluster = await Clusters.findById(clusterId);
+        if (!cluster.members.includes(user._id)) {
+            throw "not authorised to access cluster"
+        };
+        const file = await Files.findById(fileId);
+        if (!file.access.includes(user._id)) {
+            throw "not authorised to access file"
+        };
+        if (!cluster.members.includes(member._id)) {
+            throw "add participant to cluster first"
+        };
+        file.access.push(member._id);
+        await file.save();
+        return res.status(200).json({
+            success: true
+        })
+    } catch (error) {
+        if (error === "user not found") {
+            return res.status(404).json({
+                success: false,
+                error: error.errors?.[0]?.message || error
+            });
+        } else if (error === "not authorised to access cluster" ||
+            error === "not authorised to access file") {
+            return res.status(403).json({
+                success: false,
+                error: error.errors?.[0]?.message || error
+            });
+        } else if (error === "add participant to cluster first") {
+            return res.status(400).json({
+                success: false,
+                error: error.errors?.[0]?.message || error
+            });
+        };
+        return res.status(500).json({
+            success: false,
+            error: error.errors?.[0]?.message || error
+        });
+    };
+};
+
+// my files 
+const getMyFiles = async (req, res) => {
+    try {
+        const user = await Users.findById(req.user._id);
+        const { clusterId } = req.query;
+        const cluster = await Clusters.findById(clusterId);
+        if (!cluster.members.includes(user._id)) {
+            throw "not authorised to access cluster"
+        };
+        const files = await Files.find({
+            cluster: clusterId, access: {
+                $in: [user._id]
+            }
+        });
+        return res.status(200).json({
+            success: true,
+            files
+        });
+    } catch (error) {
+        if (error === "not authorised to access cluster") {
+            return res.status(403).json({
+                success: false,
+                error: error.errors?.[0]?.message || error
+            });
+        };
+        return res.status(500).json({
+            success: false,
+            error: error.errors?.[0]?.message || error
+        });
+    };
+};
+
 export {
-    createFile, accessAFile
+    createFile, accessAFile, addAccessMember, getMyFiles
 }

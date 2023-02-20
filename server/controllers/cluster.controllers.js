@@ -128,6 +128,7 @@ const makeClusterAdmin = async (req, res) => {
             throw "user not in cluster"
         };
         cluster.admin.push(userId);
+        await cluster.save();
         return res.status(200).json({
             success: true,
         });
