@@ -146,6 +146,35 @@ const makeClusterAdmin = async (req, res) => {
     };
 };
 
+// add members to cluster
+const addClusterMember = async (req, res) => {
+    try {
+        const user = await Users.findById(req.user._id);
+        const { clusterId } = req.query;
+        const { members } = req.body;
+        const cluster = await Clusters.findById(clusterId);
+        if (!cluster.admin.includes(user._id)) {
+            throw "not authorised to add members"
+        };
+        cluster.members = [...cluster.members, ...members];
+        await cluster.save();
+        return res.status(200).json({
+            success: true,
+        });
+    } catch (error) {
+        if (error === "not authorised") {
+            return res.status(403).json({
+                success: false,
+                error: error.errors?.[0]?.message || error
+            });
+        };
+        return res.status(500).json({
+            success: false,
+            error: error.errors?.[0]?.message || error
+        });
+    };
+};
+
 export {
-    createCluster, myClusters, accessCluster, makeClusterAdmin
+    createCluster, myClusters, accessCluster, makeClusterAdmin, addClusterMember
 }
