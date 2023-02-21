@@ -22,7 +22,7 @@ const HomeCard = ({ text, buttonText }) => {
                         className='flex items-center justify-center'
                     >
                         <button
-                            className='bg-red-300 w-40 h-10 font-bold text-white rounded-md transition hover:bg-red-200'
+                            className='bg-red-300 w-40 h-10 font-bold text-white rounded-md transition hover:bg-red-200 focus:outline-none'
                         >
                             {buttonText}
                         </button>

@@ -5,6 +5,7 @@ import RegisterPage from './pages/RegisterPage';
 import Splash from './pages/Splash';
 import Home from './pages/Home';
 import Footer from './components/Footer';
+import CreateCluster from './pages/CreateCluster';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/home" element={<Home />} />
           <Route path="/" element={<Splash />} />
+          <Route path="/create/cluster" element={<CreateCluster />} />
         </Routes>
         <div
           className='flex justify-center items-center sticky absolute bottom-5'

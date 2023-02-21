@@ -6,9 +6,8 @@ import dotenv from "dotenv";
 import { errorHandler } from "./middlewares/error.middleware.js";
 import userRouter from "./routes/user.routes.js";
 import clusterRouter from "./routes/cluster.routes.js";
-import fileRouter from "./routes/file.routes.js"
-// import multer from "multer";
-// import { protect } from "./middlewares/auth.middleware.js";
+import fileRouter from "./routes/file.routes.js";
+import searchRouter from "./routes/search.routes.js";
 
 dotenv.config();
 
@@ -36,27 +35,11 @@ app.get("/", (req, res) => {
     });
 });
 
-// const storage = multer.diskStorage({
-//     destination: (req, file, cb) => {
-//         console.log(file)
-//         cb(null, "uploads");
-//     },
-//     filename: (req, file, cb) => {
-//         cb(null, `uploads-${file.originalname}`)
-//     },
-// });
-
-// const upload = multer({ storage: storage });
-
-// app.post("/upload/file", protect, upload.single("file"), (req, res) => {
-//     const file = req.file;
-//     console.log(file.filename);
-// })
-
 // endpoints
 app.use("/api/user", userRouter);
 app.use("/api/cluster", clusterRouter);
 app.use("/api/file", fileRouter);
+app.use("/api/search", searchRouter);
 
 app.use(errorHandler)
 app.listen(port, () => console.log(`listening on port: ${port}`))
