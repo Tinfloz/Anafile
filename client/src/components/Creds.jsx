@@ -50,7 +50,7 @@ const Creds = ({ register }) => {
     };
 
     useEffect(() => {
-        if (isSuccess && isError) {
+        if (!isSuccess && !isError) {
             return
         };
         if (isSuccess) {

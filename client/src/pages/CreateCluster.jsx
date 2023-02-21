@@ -5,12 +5,20 @@ import { resetSearch, searchAnafileUsers } from '../reducers/search/search.slice
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { createMyCluster, resetClusterHelpers } from '../reducers/cluster/cluster.slice';
 
 const successToast = () => {
     toast.success('Successful!', {
         position: toast.POSITION.BOTTOM_LEFT
     });
 };
+
+const errorToast = () => {
+    toast.error("Error!", {
+        position: toast.POSITION.BOTTOM_LEFT
+    });
+};
+
 
 const CreateCluster = () => {
 
@@ -257,6 +265,22 @@ const SetMembers = ({ onClick }) => {
 const Confirm = ({ details }) => {
 
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const { isSuccess, isError } = useSelector(state => state.cluster);
+
+
+    useEffect(() => {
+        if (!isSuccess && !isError) {
+            return
+        };
+        if (isSuccess) {
+            successToast();
+        } else if (isError) {
+            errorToast();
+        };
+        dispatch(resetClusterHelpers());
+    }, [isSuccess, isError, dispatch])
+
 
     return (
         <>
@@ -270,6 +294,9 @@ const Confirm = ({ details }) => {
                         className='absolute bottom-0 p-5 flex justify-start space-x-3'
                     >
                         <button
+                            onClick={async () => {
+                                await dispatch(createMyCluster(details));
+                            }}
                             className='w-40 h-10 bg-indigo-500 transition hover:bg-indigo-300 rounded-md text-white font-bold'
                         >
                             Create cluster
@@ -293,6 +320,7 @@ const Confirm = ({ details }) => {
                         </text>
                     </div>
                 </div>
+                <ToastContainer />
             </div>
         </>
     )

@@ -1,6 +1,10 @@
-import React from 'react'
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const HomeCard = ({ text, buttonText }) => {
+const HomeCard = ({ text, buttonText, nav }) => {
+
+    const navigate = useNavigate();
+
     return (
         <>
             <div
@@ -22,6 +26,7 @@ const HomeCard = ({ text, buttonText }) => {
                         className='flex items-center justify-center'
                     >
                         <button
+                            onClick={() => navigate(nav)}
                             className='bg-red-300 w-40 h-10 font-bold text-white rounded-md transition hover:bg-red-200 focus:outline-none'
                         >
                             {buttonText}

@@ -13,12 +13,12 @@ const Home = () => {
                     <div
                         className='flex justify-center items-center'
                     >
-                        <HomeCard text={"Create a new cluster"} buttonText={"Create"} />
+                        <HomeCard text={"Create a new cluster"} buttonText={"Create"} nav={"/create/cluster"} />
                     </div>
                     <div
                         className='flex justify-center items-center'
                     >
-                        <HomeCard text={"View your clusters here!"} buttonText={"View Clusters"} />
+                        <HomeCard text={"View your clusters here!"} buttonText={"View Clusters"} nav={"#"} />
                     </div>
                 </div>
             </div>

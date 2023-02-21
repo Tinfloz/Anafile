@@ -24,7 +24,7 @@ const createCluster = async (req, res) => {
         };
         const usersSendEmail = [...admin, ...members];
         for (let i of usersSendEmail) {
-            const userSend = await Users.findById(i._id);
+            const userSend = await Users.findById(i);
             const options = {
                 email: userSend.email,
                 subject: `Access key to cluster ${cluster.name}`,
@@ -41,6 +41,7 @@ const createCluster = async (req, res) => {
             succes: true
         })
     } catch (error) {
+        console.log(error, "error")
         if (error === "missing inputs") {
             return res.status(400).json({
                 success: false,
