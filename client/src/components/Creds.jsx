@@ -24,6 +24,10 @@ const Creds = ({ register }) => {
 
     const onSubmit = async (e) => {
         e.preventDefault();
+        if (!creds.email.endsWith("acg.co.in")) {
+            errorToast();
+            return
+        }
         register ? await dispatch(registerUser(creds)) : await dispatch(loginUser(creds));
         setCreds(prevState => ({
             ...prevState,
