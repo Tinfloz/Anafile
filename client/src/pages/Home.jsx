@@ -18,7 +18,7 @@ const Home = () => {
                     <div
                         className='flex justify-center items-center'
                     >
-                        <HomeCard text={"View your clusters here!"} buttonText={"View Clusters"} nav={"#"} />
+                        <HomeCard text={"View your clusters here!"} buttonText={"View Clusters"} nav={"/my/clusters"} />
                     </div>
                 </div>
             </div>

@@ -20,6 +20,17 @@ export const createMyCluster = createAsyncThunk("cluster/create", async (details
     };
 });
 
+export const getAllLoginUserClusters = createAsyncThunk("my/clusters", async (_, thunkAPI) => {
+    try {
+        const token = thunkAPI.getState().auth.user.token;
+        return await clusterService.getAllClusters(token);
+    } catch (error) {
+        const message = (error.response && error.response.data && error.response.data.message)
+            || error.message || error.toString();
+        return thunkAPI.rejectWithValue(message)
+    };
+});
+
 const clusterSlice = createSlice({
     name: "cluster",
     initialState,
@@ -40,6 +51,19 @@ const clusterSlice = createSlice({
                 state.isSuccess = true
             })
             .addCase(createMyCluster.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isError = true;
+                state.message = action.payload;
+            })
+            .addCase(getAllLoginUserClusters.pending, state => {
+                state.isLoading = true;
+            })
+            .addCase(getAllLoginUserClusters.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.isSuccess = true;
+                state.cluster = action.payload.clusters
+            })
+            .addCase(getAllLoginUserClusters.rejected, (state, action) => {
                 state.isLoading = false;
                 state.isError = true;
                 state.message = action.payload;

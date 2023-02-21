@@ -59,7 +59,7 @@ const createCluster = async (req, res) => {
 const myClusters = async (req, res) => {
     try {
         const user = await Users.findById(req.user._id);
-        const clusters = Clusters.find({
+        const clusters = await Clusters.find({
             members: {
                 $in: [user._id]
             }
@@ -69,6 +69,7 @@ const myClusters = async (req, res) => {
             clusters
         });
     } catch (error) {
+        console.error(error)
         return res.status(500).json({
             success: false,
             error: error.errors?.[0]?.message || error
