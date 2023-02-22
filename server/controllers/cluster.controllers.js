@@ -15,7 +15,7 @@ const createCluster = async (req, res) => {
         const admin = [user._id];
         const cluster = await Clusters.create({
             name,
-            members,
+            members: [...members, user._id],
             admin,
             clusterCode
         });
@@ -80,14 +80,12 @@ const myClusters = async (req, res) => {
 // access cluster
 const accessCluster = async (req, res) => {
     try {
-        const { name } = req.query;
+        const { id } = req.query;
         const { password } = req.body;
         if (!password) {
             throw "provide a password"
         };
-        const cluster = await Clusters.findOne({
-            name
-        });
+        const cluster = await Clusters.findById(id);
         if (!cluster) {
             throw "cluster not found"
         };

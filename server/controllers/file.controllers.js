@@ -50,7 +50,7 @@ const createFile = async (req, res) => {
             };
         };
         if (invalid.length === 0) {
-            const name = file.originalname;
+
             const base64xls = new Buffer.from(JSON.stringify(result.Sheet1)).toString("base64");
             const accessCode = shortid.generate();
             const access = [req.user._id];
@@ -58,7 +58,7 @@ const createFile = async (req, res) => {
                 const fileHandlers = await Users.findOne({
                     email: i
                 });
-                access.push(user._id);
+                access.push(fileHandlers._id);
             };
             const file = await Files.create({
                 fileString: base64xls,

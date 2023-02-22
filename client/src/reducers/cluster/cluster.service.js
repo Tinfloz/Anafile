@@ -22,10 +22,21 @@ const getAllClusters = async (token) => {
     };
     const response = await axios.get(API_URL + "/my/clusters", config);
     return response.data;
+};
+
+// access a cluster 
+const accessMyCluster = async (id, password, token) => {
+    const config = {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    };
+    const response = await axios.post(API_URL + `/access/cluster?id=${id}`, password, config);
+    return response.data;
 }
 
 const clusterService = {
-    createCluster, getAllClusters
+    createCluster, getAllClusters, accessMyCluster
 };
 
 export default clusterService;

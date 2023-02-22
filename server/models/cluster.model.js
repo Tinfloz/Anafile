@@ -13,12 +13,6 @@ const clusterSchema = new mongoose.Schema({
             ref: "Users"
         }
     ],
-    files: [
-        {
-            type: mongoose.Types.ObjectId,
-            ref: "Files"
-        }
-    ],
     clusterCode: {
         type: String,
         required: true

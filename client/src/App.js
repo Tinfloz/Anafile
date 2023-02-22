@@ -7,6 +7,7 @@ import Home from './pages/Home';
 import Footer from './components/Footer';
 import CreateCluster from './pages/CreateCluster';
 import MyClusters from './pages/MyClusters';
+import Cluster from './pages/Cluster';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route path="/home" element={<Home />} />
           <Route path="/" element={<Splash />} />
           <Route path="/my/clusters" element={<MyClusters />} />
+          <Route path="/cluster" element={<Cluster />} />
           <Route path="/create/cluster" element={<CreateCluster />} />
         </Routes>
         <div

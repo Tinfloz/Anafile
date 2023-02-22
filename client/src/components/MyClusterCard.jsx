@@ -1,6 +1,17 @@
-import React from 'react'
+import React, { useEffect, useState, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { accessLoginUserCluster, resetClusterHelpers } from '../reducers/cluster/cluster.slice';
+import { useNavigate } from 'react-router-dom';
 
 const MyClusterCard = ({ cluster }) => {
+
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const [password, setPassword] = useState({
+        password: ""
+    });
+
+
     return (
         <>
             <div
@@ -25,6 +36,10 @@ const MyClusterCard = ({ cluster }) => {
                             className='flex justify-center items-center'
                         >
                             <input
+                                onChange={(e) => setPassword(prevState => ({
+                                    ...prevState,
+                                    password: e.target.value
+                                }))}
                                 placeholder="access code"
                                 className='w-60 h-10 rounded-md focus:outline-none border border-gray-100 p-5'
                             />
@@ -33,6 +48,13 @@ const MyClusterCard = ({ cluster }) => {
                             className='flex justify-center items-center'
                         >
                             <button
+                                onClick={async () => {
+                                    const clusterDetails = {
+                                        id: cluster._id,
+                                        password,
+                                    };
+                                    navigate("/cluster", { state: clusterDetails })
+                                }}
                                 className='w-40 h-10 bg-red-300 text-white font-bold rounded-md transition hover:bg-red-100 focus:outline-none'
                             >
                                 Enter

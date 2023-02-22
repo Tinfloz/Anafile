@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import MyClusterCard from '../components/MyClusterCard';
 import { useDispatch, useSelector } from 'react-redux';
-import { getAllLoginUserClusters, resetClusterHelpers } from '../reducers/cluster/cluster.slice';
+import { getAllLoginUserClusters, resetCluster, resetClusterHelpers } from '../reducers/cluster/cluster.slice';
 import { GridLoader } from "react-spinners";
 
 const MyClusters = () => {
@@ -15,6 +15,12 @@ const MyClusters = () => {
             dispatch(resetClusterHelpers());
         })()
     }, [])
+
+    useEffect(() => {
+        return () => {
+            dispatch(resetCluster());
+        }
+    }, [dispatch])
 
     return (
         <>
