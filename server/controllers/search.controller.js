@@ -28,7 +28,7 @@ const searchClusterUser = async (req, res) => {
         const { query } = req.query;
         const { clusterId } = req.params;
         const cluster = await Clusters.findById(clusterId).populate("members");
-        const regExp = new RegExp(query, "g");
+        const regExp = new RegExp(query.charAt(0).toUpperCase() + query.slice(1), "g");
         const members = cluster.members.filter(el => el.name.match(regExp));
         return res.status(200).json({
             members

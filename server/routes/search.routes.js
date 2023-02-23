@@ -5,6 +5,6 @@ import { protect } from "../middlewares/auth.middleware.js";
 let router = express.Router();
 
 router.route("/").get(protect, searchUser);
-router.route("/cluster/user").get(protect, searchClusterUser);
+router.route("/cluster/user/:clusterId").get(protect, searchClusterUser);
 
 export default router;

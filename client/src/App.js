@@ -8,6 +8,8 @@ import Footer from './components/Footer';
 import CreateCluster from './pages/CreateCluster';
 import MyClusters from './pages/MyClusters';
 import Cluster from './pages/Cluster';
+import UploadFile from './pages/UploadFile';
+import Test from './pages/Test';
 
 function App() {
   return (
@@ -17,10 +19,12 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/home" element={<Home />} />
-          <Route path="/" element={<Splash />} />
           <Route path="/my/clusters" element={<MyClusters />} />
           <Route path="/cluster" element={<Cluster />} />
           <Route path="/create/cluster" element={<CreateCluster />} />
+          <Route path="/upload/file/:id" element={<UploadFile />} />
+          <Route path="/test" element={<Test />} />
+          <Route path="/" element={<Splash />} />
         </Routes>
         <div
           className='flex justify-center items-center sticky absolute bottom-5'

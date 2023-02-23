@@ -18,10 +18,11 @@ export const searchAnafileUsers = createAsyncThunk("ana/users", async (query, th
 });
 
 // search cluster users
-export const searchUserCluster = createAsyncThunk("cluster/users", async (query, thunkAPI) => {
+export const searchUserCluster = createAsyncThunk("cluster/users", async (queryDetails, thunkAPI) => {
     try {
         const token = thunkAPI.getState().auth.user.token;
-        return await searchService.searchClusterUsers(token, query);
+        const { id, query } = queryDetails;
+        return await searchService.searchClusterUsers(token, query, id);
     } catch (error) {
         const message = (error.response && error.response.data && error.response.data.message)
             || error.message || error.toString();

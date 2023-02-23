@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { getDate } from '../helpers/get.data'
+import { getDate } from '../helpers/get.date'
 
 const IndividualClusterCard = ({ cluster }) => {
 

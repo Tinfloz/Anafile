@@ -148,6 +148,12 @@ const SetMembers = ({ onClick }) => {
         })()
     }, [query, dispatch])
 
+    useEffect(() => {
+        return () => {
+            dispatch(resetSearch())
+        }
+    }, [dispatch])
+
     return (
         <>
             <div

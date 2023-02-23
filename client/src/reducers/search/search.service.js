@@ -12,13 +12,13 @@ const searchAppUsers = async (token, query) => {
     return response.data;
 };
 
-const searchClusterUsers = async (token, query) => {
+const searchClusterUsers = async (token, query, id) => {
     const config = {
         headers: {
             Authorization: `Bearer ${token}`
         }
     };
-    const response = await axios.get(API_URL + `/cluster/user?query=${query}`, config);
+    const response = await axios.get(API_URL + `/cluster/user/${id}?query=${query}`, config);
     return response.data;
 };
 

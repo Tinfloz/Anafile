@@ -83,6 +83,7 @@ const Cluster = () => {
                                             className='flex w-1/2 justify-center items-center'
                                         >
                                             <button
+                                                onClick={() => navigate(`/upload/file/${cluster._id}`)}
                                                 className='w-40 h-10 rounded-md bg-violet-400 transition hover:bg-violet-200 text-white font-bold'
                                             >
                                                 Upload a file

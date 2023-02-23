@@ -5,65 +5,67 @@ import { nextChar } from "../helpers/next.char.js";
 import Users from "../models/users.model.js";
 import { sendEmail } from "../helpers/send.email.js";
 import Clusters from "../models/cluster.model.js";
+import { validateTypes } from "../helpers/validate.type.js";
 
+// create file 
 const createFile = async (req, res) => {
     try {
-        const user = await Users.findById(req.user._id);
+        const { types, id, clusterId } = req.body;
         const file = req.file;
-        const { keys, values, emails } = req.body;
-        const { clusterId } = req.query;
         const cluster = await Clusters.findById(clusterId);
-        if (!cluster.members.includes(user._id)) {
+        if (!cluster.members.includes(req.user._id)) {
             throw "not authorised"
         };
-        const keyColumns = () => {
+        const parsedId = JSON.parse(id);
+        const parsedTypes = JSON.parse(types)
+        const typeArray = parsedTypes.map(el => el.dataType);
+        const fieldArray = parsedTypes.map(el => el.name);
+        const columnToKeyGen = () => {
+            const columnToKey = {};
             let startChar = "A";
-            let columns = [];
-            let columnToKey = {};
-            while (columns.length !== keys.length) {
-                columns.push(startChar);
-                if (columns.length === keys.length) {
+            let startIdx = 0;
+            while (fieldArray.length) {
+                columnToKey = { ...columnToKey, [startChar]: fieldArray[startIdx] };
+                if (Object.keys(columnToKey).length === fieldArray) {
                     break
                 };
-                startChar = nextChar(startChar)
+                startChar = nextChar(startChar);
+                startIdx += 1;
             };
-            for (let i = 0; i < columns.length; i++) {
-                columnToKey[columns[i]] = keys[i]
-            };
-            return columnToKey
+            return columnToKey;
         };
         const result = excelToJson({
             sourceFile: file.path,
             header: {
                 rows: 1
             },
-            columnToKey: keyColumns()
+            columnToKey: columnToKeyGen()
         });
-        const idx = values.reduce((a, e, i) => (e === "number") ? a.concat(i) : a, []);
-        const invalid = [];
+        const dataValidationArray = [];
         for (let i of result.Sheet1) {
-            for (let k of idx) {
-                if (/\d/.test(i[Object.keys(i)[k]])) {
-                    continue
-                };
-                invalid.push(i);
+            let validationObject = {}
+            let iValues = Object.values(i);
+            for (let i = 0; i < iValues.length; i++) {
+                validationObject[iValues[i]] = typeArray[i]
             };
+            dataValidationArray.push(validationObject)
+        };
+        const invalid = [];
+        for (let i of dataValidationArray) {
+            if (!validateTypes(i)) {
+                continue
+            };
+            invalid.push(i);
         };
         if (invalid.length === 0) {
-
-            const base64xls = new Buffer.from(JSON.stringify(result.Sheet1)).toString("base64");
+            const access = [...parsedId, req.user._id];
+            const fileString = Buffer.from(JSON.stringify(result.Sheet1)).toString("base64");
+            const fileName = file.originalname;
             const accessCode = shortid.generate();
-            const access = [req.user._id];
-            for (let i of emails) {
-                const fileHandlers = await Users.findOne({
-                    email: i
-                });
-                access.push(fileHandlers._id);
-            };
             const file = await Files.create({
-                fileString: base64xls,
-                fileName: file.originalname,
                 cluster: clusterId,
+                fileName,
+                fileString,
                 access,
                 accessCode
             });
@@ -71,20 +73,26 @@ const createFile = async (req, res) => {
                 throw "file could not be created"
             };
             try {
-                let subject = `Access code for file titled ${file.originalname}`;
-                let emailToSend = `The access code to file ${file.originalname} is: ${accessCode}.`
-                let receivers = [...emails, user.email];
-                for (let i of receivers) {
-                    await sendEmail({ email: i, subject, emailToSend });
-                }
+                const emailOptions = access.map(async el => {
+                    const user = await Users.findById(el).lean().select("email");
+                    return sendEmail({
+                        to: user.email,
+                        subject: `Access code for file titled ${file.originalname}`,
+                        emailToSend: `The access code to file ${file.originalname} is: ${accessCode}.`
+                    });
+                });
+                await Promise.allSettled(emailOptions);
             } catch (error) {
-                console.error(error);
+                console.log(error)
             }
             return res.status(200).json({
                 success: true
             });
         };
-        throw "file could not be validated as some of the fields have data other than the specified datatype"
+        return res.status(400).json({
+            success: false,
+            invalid
+        });
     } catch (error) {
         return res.status(500).json({
             success: false,
@@ -226,6 +234,7 @@ const getMyFiles = async (req, res) => {
         });
     };
 };
+
 
 export {
     createFile, accessAFile, addAccessMember, getMyFiles
