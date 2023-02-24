@@ -74,6 +74,7 @@ const Cluster = () => {
                                             className='flex w-1/2 justify-center items-center border-r border-gray-200'
                                         >
                                             <button
+                                                onClick={() => navigate(`/my/files/${cluster._id}`)}
                                                 className='w-40 h-10 rounded-md bg-violet-400 transition hover:bg-violet-200 text-white font-bold'
                                             >
                                                 View Files

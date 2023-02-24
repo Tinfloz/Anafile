@@ -21,6 +21,18 @@ export const uploadAFileToCluster = createAsyncThunk("upload/file", async (formD
     };
 });
 
+// get my files
+export const getAllLoginUserClusterFiles = createAsyncThunk("my/files", async (clusterId, thunkAPI) => {
+    try {
+        const token = thunkAPI.getState().auth.user.token;
+        return await fileService.getAllFiles(token, clusterId);
+    } catch (error) {
+        const message = (error.response && error.response.data && error.response.data.message)
+            || error.message || error.toString();
+        return thunkAPI.rejectWithValue(message)
+    };
+});
+
 const fileSlice = createSlice({
     name: "file",
     initialState,
@@ -44,6 +56,19 @@ const fileSlice = createSlice({
                 };
             })
             .addCase(uploadAFileToCluster.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isError = true;
+                state.message = action.payload;
+            })
+            .addCase(getAllLoginUserClusterFiles.pending, state => {
+                state.isLoading = true;
+            })
+            .addCase(getAllLoginUserClusterFiles.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.isSuccess = true;
+                state.file = action.payload.files;
+            })
+            .addCase(getAllLoginUserClusterFiles.rejected, (state, action) => {
                 state.isLoading = false;
                 state.isError = true;
                 state.message = action.payload;

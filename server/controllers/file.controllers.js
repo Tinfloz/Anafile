@@ -19,14 +19,16 @@ const createFile = async (req, res) => {
         const parsedId = JSON.parse(id);
         const parsedTypes = JSON.parse(types)
         const typeArray = parsedTypes.map(el => el.dataType);
+        console.log(typeArray, "type array")
         const fieldArray = parsedTypes.map(el => el.name);
+        console.log(fieldArray, "fiel array")
         const columnToKeyGen = () => {
-            const columnToKey = {};
+            let columnToKey = {};
             let startChar = "A";
             let startIdx = 0;
             while (fieldArray.length) {
                 columnToKey = { ...columnToKey, [startChar]: fieldArray[startIdx] };
-                if (Object.keys(columnToKey).length === fieldArray) {
+                if (Object.keys(columnToKey).length === fieldArray.length) {
                     break
                 };
                 startChar = nextChar(startChar);
@@ -62,14 +64,14 @@ const createFile = async (req, res) => {
             const fileString = Buffer.from(JSON.stringify(result.Sheet1)).toString("base64");
             const fileName = file.originalname;
             const accessCode = shortid.generate();
-            const file = await Files.create({
+            const fileDb = await Files.create({
                 cluster: clusterId,
                 fileName,
                 fileString,
                 access,
                 accessCode
             });
-            if (!file) {
+            if (!fileDb) {
                 throw "file could not be created"
             };
             try {
@@ -94,6 +96,7 @@ const createFile = async (req, res) => {
             invalid
         });
     } catch (error) {
+        console.log(error)
         return res.status(500).json({
             success: false,
             error: error.errors?.[0]?.message || error

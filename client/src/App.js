@@ -10,6 +10,7 @@ import MyClusters from './pages/MyClusters';
 import Cluster from './pages/Cluster';
 import UploadFile from './pages/UploadFile';
 import Test from './pages/Test';
+import ViewFiles from './pages/ViewFiles';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="/create/cluster" element={<CreateCluster />} />
           <Route path="/upload/file/:id" element={<UploadFile />} />
           <Route path="/test" element={<Test />} />
+          <Route path="/my/files/:clusterId" element={<ViewFiles />} />
           <Route path="/" element={<Splash />} />
         </Routes>
         <div

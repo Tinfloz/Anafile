@@ -258,7 +258,7 @@ const SetDataTypes = ({ callbackFn }) => {
     return (
         <>
             <div
-                className='relative h-[75vh] bg-yellow-100 flex justify-center p-3'
+                className='relative h-auto bg-yellow-100 flex justify-center p-3'
             >
                 <div
                     className='absolute bottom-0 p-4 w-full space-x-4'
@@ -298,7 +298,7 @@ const SetDataTypes = ({ callbackFn }) => {
                     {
                         state?.map(el => (
                             <div
-                                className='flex justify-center items-center'
+                                className='flex justify-center items-center mb-10'
                             >
                                 <DynamicInputFields callbackFn={fieldsCallback} />
                             </div>
